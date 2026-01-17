@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Degree Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1><u>Course Tracker</u></h1>
+    <p>Not including Graduation Writing Requirement, United States Cultural Pluralism, etc.</p>
+
+    <div class="CLI">
+        <h2><strong>Command Line Interface</strong></h2>
+        <input type="text" id="cli-course-prefix">
+        <input type="text" id="cli-course-numbers">
+        <select id="select_requirement">
+            <option>Select Requirement</option>
+            <option>Primary Major</option>
+            <option>General Education</option>
+        </select>
+        <select id="select_area">
+            <option>Select Area</option>
+        </select>
+        <select id="select_action">
+            <option>Select Action</option>
+            <option>Satisfied</option>
+            <option>In Progress</option>
+            <option>Not Satisfied</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div id="primary_major_requirement"> 
+        <h1>Primary Major</h1>      
+        <div class="Area" id="primary_major_areas">
+            <h2>Computing Course</h2>
+            <h2>Specified Courses</h2>
+            <h2>CSC 225</h2>
+            <h2>Software Engineering Elective</h2>
+            <h2>Networks Elective</h2>
+            <h2>Senior Project Courses</h2>
+            <h2>Support Courses</h2>
+            <h2>Life Science Elective</h2>
+            <h2>Physical Science Electives</h2>
+            <h2>Support Additional Science Electives</h2>
+            <h2>General Curriculum Math/Stats Elective</h2>
+            <h2>General Curriculum Technical Electives</h2>
+        </div>
+    </div>
+
+    <br>
+
+    <div id="general_education_requirement"> 
+        <h1>General Education</h1> 
+        <div class="Area" id="general_education_areas">
+            <h2>A</h2>
+            <h2>B</h2>
+            <h2>C</h2>
+            <h2>D1</h2>
+            <h2>D Elective</h2>
+            <h2>E</h2>
+            <h2>F</h2>
+            <h2>Upper Division</h2>
+        </div>
+    </div>
+
+    <script src="main.js" type="module"></script>
+</body>
+</html>
