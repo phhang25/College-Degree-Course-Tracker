@@ -1,21 +1,32 @@
-h1{
+h1 {
     text-align: center;
     font-size: 40px;
 }
 
-.course_box{
-    border: 5px grey;
+#beginning_draft_rectangle {
+    border: 5px gray;
     border-style: solid;
+    border-radius: 20px;
+    background-color: lightgrey;
+    color: rgb(100, 100, 100);
     width:45%;
     height:300px;
-    background-color: lightgrey;
+    font-size: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 20px;
-    position: relative;
-    left: 20px;
-    font-size: 80px;
-    color: rgb(100, 100, 100);
+    margin: auto;
     cursor: pointer;
+}
+
+.rectangle_template { 
+    border: 5px gray;
+    border-style: solid;
+    border-radius: 20px;
+    background-color: lightblue;
+    color: black;
+    width: 45%;
+    height: 300px;
+    font-size: 80px;
+    margin: auto;
 }
