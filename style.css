@@ -1,6 +1,10 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 h1 {
     text-align: center;
-    font-size: 40px;
+    font-size: 50px;
 }
 
 #beginning_draft_rectangle {
@@ -27,6 +31,28 @@ h1 {
     color: black;
     width: 45%;
     height: 300px;
-    font-size: 80px;
+    font-size: 50px;
+    justify-content: center;
+    align-items: center;
     margin: auto;
+}
+
+.message_box_template {
+    border: 5px black;
+    border-style: solid;
+    border-radius: 20px;
+    background-color: lightgreen;
+    color: black;
+    width: 45%;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+#requirement_input {
+    width: 470px;
+    height: 30px;
+    font-size: 30px;
+    border-radius: 10px;
 }
