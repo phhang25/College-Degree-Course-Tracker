@@ -59,9 +59,8 @@ if (localStorage.length === 0) {
     //its course requirement is created
 
     function parseRequirementInputToLocalStorage(event) {
-        if (event.key === 'Enter' && requirement_input.value !== ''){
-            const rectangle_0_json = {"requirement":requirement_input.value, "areas_and_courses":{}};
-            localStorage.setItem('0', JSON.stringify(rectangle_0_json));
+        if (event.key === 'Enter' && requirement_input.value !== ''){;
+            localStorage.setItem(requirement_input.value, '{}');
         }
     }
 
@@ -84,93 +83,143 @@ else {
     loadWebPage();
 }
 
-//todo: create a new way to organize rectangles to account for deletion of rectangles
-//allowing the use of for each loop?
-
 function loadWebPage() {
-    // for (let i = 0; i < localStorage.length; i++) {
-    //     if (localStorage.getItem('rectangle_' + i) !== null) {
-    //         const rectangle = document.createElement('div');
-    //         rectangle.className = 'rectangle_template';
-    //         rectangle.id = 'rectangle_' + i;
-
-    //         //append course requirement text 
-
-    //         const requirement_string = JSON.parse(localStorage.getItem(rectangle.id)).requirement;
-    //         const requirement_paragraph = document.createElement('p');
-    //         requirement_paragraph.textContent = requirement_string;
-    //         requirement_paragraph.className = 'requirement_template';
-    //         rectangle.append(requirement_paragraph);
-
-    //         const areas_and_courses_string = JSON.parse(localStorage.getItem(rectangle.id)).areas_and_courses;
-    //         if (areas_and_courses_string === '') {
-    //             const draft_area = document.createElement('div');
-    //             draft_area.className = 'draft_area_template';
-    //         } 
-
-    //         document.body.append(rectangle);
-    //     }
-    // }
-
-    for (const key in Object.keys(localStorage)) {
-        console.log(key);
+    for (const key_index in Object.keys(localStorage)) {
         const rectangle = document.createElement('div');
         rectangle.className = 'rectangle_template';
-        const rectangle_json = JSON.parse(localStorage.getItem(key));
-        const requirement = rectangle_json.requirement;
-        const areas_and_courses = rectangle_json.areas_and_courses;
 
-        appendRequirement(rectangle, requirement);
-        appendAreas(rectangle, areas_and_courses);
-        document.body.append(rectangle);
-    }
+        //append requirement to rectangle
 
-    function appendRequirement(rectangle, requirement) {
-        const requirement_div = document.createElement('div');
-        requirement_div.textContent = requirement;
-        requirement_div.className = 'requirement_template';
-        rectangle.append(requirement_div);
-    }
+        const requirement = document.createElement('div');
+        requirement.textContent = localStorage.key(parseInt(key_index));
+        requirement.className = 'requirement_template';
+        rectangle.append(requirement);
 
-    function appendAreas(rectangle, areas_and_courses) {
-        const array_of_areas = Object.keys(areas_and_courses);
-        if (array_of_areas.length === 0) {
-            const draft_area = document.createElement('div');
-            draft_area.className = 'draft_area_template';
-            draft_area.addEventListener
-            rectangle.append(draft_area);
+        //append areas of each rectangle
 
-            draft_area.addEventListener('mouseover', makeBorderDashedWithMessage);
-            draft_area.addEventListener('mouseleave', removeBorderAndMessage);
+        const current_key = requirement.textContent;
+        const current_rectangle_data = JSON.parse(localStorage.getItem(current_key));
 
-            function makeBorderDashedWithMessage(event) {
-                event.target.style.borderStyle = 'dashed';
-                event.target.style.borderRadius = '20px';
-                event.target.textContent = 'Add a course area'
-                event.target.style.cursor = 'pointer';
+        for (const area_string in current_rectangle_data) {
+            const area_and_courses_container = document.createElement('div');
+            area_and_courses_container.className = 'area_and_courses_container_template';
+
+            console.log(area_string);
+            const area = document.createElement('p');
+            area.className = 'area_template';
+            area.textContent = area_string;
+            rectangle.append(area_and_courses_container);
+            area_and_courses_container.append(area);
+
+            //append draft course to the bottom of each area in the rectangle
+            
+            const draft_course = document.createElement('p');
+            draft_course.className = 'draft_course_template';
+            area_and_courses_container.append(draft_course);
+
+            draft_course.addEventListener('mouseover', makeDraftCourseBorderDashedWithMessage);
+            draft_course.addEventListener('mouseleave', removeDraftCourseBorderAndMessage);
+        }
+
+        function makeDraftCourseBorderDashedWithMessage(event) {
+            event.target.style.borderStyle = 'dashed';
+            event.target.textContent = 'Add a new course';
+        }
+
+        function removeDraftCourseBorderAndMessage(event) {
+            event.target.style.borderStyle = '';
+            event.target.textContent = '';
+        }
+
+        //append draft area to the bottom of each rectangle
+        
+        const draft_area = document.createElement('div');
+        draft_area.className = 'draft_area_template';
+        draft_area.addEventListener('mouseover', makeDraftAreaBorderDashedWithMessage);
+        draft_area.addEventListener('mouseleave', removeDraftAreaBorderAndMessage);
+
+        function makeDraftAreaBorderDashedWithMessage(event) {
+            event.target.style.borderStyle = 'dashed';
+            event.target.textContent = 'Add a course area'
+        }
+
+        function removeDraftAreaBorderAndMessage(event) {
+            event.target.style.borderStyle = '';
+            event.target.textContent = '';
+        }
+
+        rectangle.append(draft_area);
+
+        draft_area.addEventListener('click', removeDraftArea);
+        draft_area.addEventListener('click', appendAreaInput);
+
+        function removeDraftArea() {
+            draft_area.remove();
+        }
+
+        function appendAreaInput() {
+            rectangle.append(area_input);
+            area_input.focus();
+        }
+
+        //when the user enters a course area, the area string is stored in a JSON and 
+        //sent to local storage, an area paragraph is appended to the rectangle div,
+        //a new draft area appears at the bottom of the rectangle, and the previous
+        //area input text is cleared
+
+        const area_input = document.createElement('input');
+        area_input.className = 'area_input_template';
+
+        area_input.addEventListener('keydown', parseAreaInputToLocalStorage);
+        area_input.addEventListener('keydown', removeAreaInput);
+        area_input.addEventListener('keydown', appendAreaAndDraftCourseToContainer);
+        area_input.addEventListener('keydown', appendNewDraftArea);
+
+        function parseAreaInputToLocalStorage(event) {
+            if (event.key === 'Enter' & area_input.value !== '') {
+                const rectangle_data = JSON.parse(localStorage.getItem(requirement.textContent));
+                const area_input_string = area_input.value;
+                rectangle_data[area_input_string] = '{}';
+                localStorage.setItem(requirement.textContent, JSON.stringify(rectangle_data));
             }
+        }
 
-            function removeBorderAndMessage(event) {
-                event.target.style.borderStyle = '';
-                event.target.textContent = '';
-            }
-
-            draft_area.addEventListener('click', removeDraftArea);
-            draft_area.addEventListener('click', createMessageBox);
-
-            function removeDraftArea() {
-                draft_area.remove();
-            }
-
-            function createMessageBox() {
-                const message_box = document.createElement('div');
-                message_box.className = 'message_box_template';
+        function removeAreaInput(event) {
+            if (event.key === 'Enter' & area_input.value !== '') {
+                area_input.remove();
             }
         }
 
         
-    }
+        
 
-    
+        function appendAreaAndDraftCourseToContainer(event) {
+            if (event.key === 'Enter' & area_input.value !== '') {
+                const area_and_courses_container = document.createElement('div');
+                area_and_courses_container.className = 'area_and_courses_container_template';
+                rectangle.append(area_and_courses_container);
+
+                const area = document.createElement('p');
+                area.className = 'area_template';
+                area.textContent = area_input.value;
+                area_and_courses_container.append(area);
+                
+                const draft_course = document.createElement('p');
+                draft_course.className = 'draft_course_template';
+                area_and_courses_container.append(draft_course);
+                draft_course.addEventListener('mouseover', makeDraftCourseBorderDashedWithMessage);
+                draft_course.addEventListener('mouseleave', removeDraftCourseBorderAndMessage);
+            }
+        }
+
+        function appendNewDraftArea(event) {
+            if (event.key === 'Enter' & area_input.value !== '') {
+                rectangle.append(draft_area);
+                area_input.value = '';
+            }
+        }
+
+        document.body.append(rectangle);
+    }    
 }
 
