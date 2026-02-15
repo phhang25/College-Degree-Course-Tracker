@@ -85,6 +85,7 @@ h1 {
     border-radius: 20px;
     border-width: 0.1px;
     margin: auto;
+    margin-bottom: 5px;
     cursor: pointer;
 }
 
@@ -94,7 +95,8 @@ h1 {
     align-items: center;
     width: 500px;
     height: 50px;
-    margin: 10px;
+    margin-bottom: 5px;
+    margin: auto;
     border-radius: 20px;
     background-color: lightblue;
     font-size: 30px;
@@ -120,4 +122,24 @@ h1 {
     margin: auto;
     margin-bottom: 10px;
     cursor: pointer;
+}
+
+.course_input_template {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: lighter;
+    font-size: 30px;
+    width: 500px;
+    height: 50px;
+    border-width: 0.1px;
+    border-radius: 20px;
+    margin: auto;
+    margin-bottom: 10px;
+    background-color: lightblue;
+}
+
+.course_status_container_template {
+    display: flex;
+    
 }

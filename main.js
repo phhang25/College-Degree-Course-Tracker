@@ -85,17 +85,21 @@ else {
 
 function loadWebPage() {
     for (const key_index in Object.keys(localStorage)) {
+        //iterate over each individual rectangle div
+
         const rectangle = document.createElement('div');
         rectangle.className = 'rectangle_template';
 
-        //append requirement to rectangle
+        //append course requirement divs to rectangle divs
 
         const requirement = document.createElement('div');
         requirement.textContent = localStorage.key(parseInt(key_index));
         requirement.className = 'requirement_template';
         rectangle.append(requirement);
 
-        //append areas of each rectangle
+        //parse strings of the rectangle's course areas from local storage,
+        //append individual course area divs to an area and courses container,
+        //and appending the container to the current rectangle
 
         const current_key = requirement.textContent;
         const current_rectangle_data = JSON.parse(localStorage.getItem(current_key));
@@ -104,54 +108,149 @@ function loadWebPage() {
             const area_and_courses_container = document.createElement('div');
             area_and_courses_container.className = 'area_and_courses_container_template';
 
-            console.log(area_string);
             const area = document.createElement('p');
             area.className = 'area_template';
             area.textContent = area_string;
-            rectangle.append(area_and_courses_container);
-            area_and_courses_container.append(area);
 
-            //append draft course to the bottom of each area in the rectangle
+            area_and_courses_container.append(area);
+            rectangle.append(area_and_courses_container);
+
+            //append a draft course div to the bottom of 
+            //the area and courses container
             
             const draft_course = document.createElement('p');
             draft_course.className = 'draft_course_template';
             area_and_courses_container.append(draft_course);
 
-            draft_course.addEventListener('mouseover', makeDraftCourseBorderDashedWithMessage);
-            draft_course.addEventListener('mouseleave', removeDraftCourseBorderAndMessage);
+            draft_course.addEventListener('mouseover', makeDraftCourseBorderDashed);
+            draft_course.addEventListener('mouseover', addMessageToDraftCourse);
+            draft_course.addEventListener('mouseleave', removeDraftCourseBorder);
+            draft_course.addEventListener('mouseleave', removeDraftCourseMessage);
+            //todo: add course inside course_and_status_container when
+            //user clicks on draft course and enters a course name.
+            //status is not satisfied by default
+            //course and status are side by side in a course_and_status_container
+            //status is a paragraph by default, but becomes a 
+            //dropdown menu upon click (will include deletion feature later)
+
+            // if (current_rectangle_data[area_string] !== '{}') {
+                
+            // }
+
+            const course_input = document.createElement('input');
+            course_input.className = 'course_input_template';
+
+            draft_course.addEventListener('click', removeDraftCourse);
+            draft_course.addEventListener('click', addCourseInput);
+            draft_course.addEventListener('click', focusCourseInput);
+
+            function removeDraftCourse() {
+                draft_course.remove();
+            }
+
+            function addCourseInput() {
+                area_and_courses_container.append(course_input);
+            }
+
+            function focusCourseInput() {
+                course_input.focus();
+            }
+
+            rectangle.addEventListener('mouseleave', removeCourseInputUponExit);
+            rectangle.addEventListener('mouseleave', addDraftCourseUponExit);
+
+            function removeCourseInputUponExit() {
+                course_input.remove();
+            }
+
+            function addDraftCourseUponExit() {
+                draft_course.style.borderStyle = '';
+                draft_course.textContent = '';
+                area_and_courses_container.append(draft_course);
+            }
+
+            course_input.addEventListener('keydown', parseCourseInputToLocalStorage);
+            course_input.addEventListener('keydown', removeCourseInputUponEnter);
+            
+            function parseCourseInputToLocalStorage(event) {
+                if (event.key === 'Enter' & course_input.value !== '') {
+                    const current_area_json = JSON.parse(current_rectangle_data[area_string]);
+                    current_area_json[course_input.value] = 'not satisfied';
+                    current_rectangle_data[area_string] = current_area_json;
+                    const new_rectangle_data_string = JSON.stringify(current_rectangle_data);
+                    
+                    const requirement_string = requirement.textContent;
+                    
+                    localStorage.setItem(requirement_string, new_rectangle_data_string);
+                }
+            }
+
+            function addCourseToContainer(event) {
+                if (event.key === 'Enter' & course_input.value !== '') {
+                    const course_and_status_container = document.createElement('div');
+                    
+                }
+            }
+
+            function removeCourseInputUponEnter(event) {
+                if (event.key === 'Enter' & course_input.value !== '') {
+                    course_input.remove();
+                }
+            }
         }
 
-        function makeDraftCourseBorderDashedWithMessage(event) {
+        function makeDraftCourseBorderDashed(event) {
             event.target.style.borderStyle = 'dashed';
+        }
+
+        function addMessageToDraftCourse(event) {
             event.target.textContent = 'Add a new course';
         }
 
-        function removeDraftCourseBorderAndMessage(event) {
+        function removeDraftCourseBorder(event) {
             event.target.style.borderStyle = '';
+        }
+
+        function removeDraftCourseMessage(event) {
             event.target.textContent = '';
         }
 
-        //append draft area to the bottom of each rectangle
+        //append a draft area div to the bottom of each rectangle div
         
         const draft_area = document.createElement('div');
         draft_area.className = 'draft_area_template';
-        draft_area.addEventListener('mouseover', makeDraftAreaBorderDashedWithMessage);
-        draft_area.addEventListener('mouseleave', removeDraftAreaBorderAndMessage);
+        rectangle.append(draft_area);
 
-        function makeDraftAreaBorderDashedWithMessage(event) {
+        draft_area.addEventListener('mouseover', makeDraftAreaBorderDashed);
+        draft_area.addEventListener('mouseover', addMessageToDraftArea);
+        draft_area.addEventListener('mouseleave', removeDraftAreaBorder);
+        draft_area.addEventListener('mouseleave', removeDraftAreaMessage);
+
+        function makeDraftAreaBorderDashed(event) {
             event.target.style.borderStyle = 'dashed';
-            event.target.textContent = 'Add a course area'
         }
 
-        function removeDraftAreaBorderAndMessage(event) {
+        function addMessageToDraftArea(event) {
+            event.target.textContent = 'Add a course area';
+        }
+
+        function removeDraftAreaBorder(event) {
             event.target.style.borderStyle = '';
+        }
+
+        function removeDraftAreaMessage(event) {
             event.target.textContent = '';
         }
 
-        rectangle.append(draft_area);
+        //when the user clicks on the draft area at the bottom of the rectangle,
+        //an input for the user to enter the new course area appears
+
+        const area_input = document.createElement('input');
+        area_input.className = 'area_input_template';
 
         draft_area.addEventListener('click', removeDraftArea);
         draft_area.addEventListener('click', appendAreaInput);
+        draft_area.addEventListener('click', makeAreaInputFocus);
 
         function removeDraftArea() {
             draft_area.remove();
@@ -159,39 +258,44 @@ function loadWebPage() {
 
         function appendAreaInput() {
             rectangle.append(area_input);
+        }
+
+        function makeAreaInputFocus() {
             area_input.focus();
         }
 
-        //when the user enters a course area, the area string is stored in a JSON and 
-        //sent to local storage, an area paragraph is appended to the rectangle div,
-        //a new draft area appears at the bottom of the rectangle, and the previous
-        //area input text is cleared
-
-        const area_input = document.createElement('input');
-        area_input.className = 'area_input_template';
+        //when the user enters a course area:
+        //1) the user input is stored in local storage 
+        //2) a course area paragraph is appended to a container, 
+        //which is appended to the rectangle div
+        //3) a new draft area appears at the bottom of the rectangle
+        //4) the previous user input text is cleared
 
         area_input.addEventListener('keydown', parseAreaInputToLocalStorage);
-        area_input.addEventListener('keydown', removeAreaInput);
+        area_input.addEventListener('keydown', removeAreaInputUponEnter);
         area_input.addEventListener('keydown', appendAreaAndDraftCourseToContainer);
         area_input.addEventListener('keydown', appendNewDraftArea);
 
         function parseAreaInputToLocalStorage(event) {
             if (event.key === 'Enter' & area_input.value !== '') {
-                const rectangle_data = JSON.parse(localStorage.getItem(requirement.textContent));
+                const requirement_string = requirement.textContent;
+                const rectangle_data_string = localStorage.getItem(requirement_string);
+                const rectangle_data = JSON.parse(rectangle_data_string);
+
                 const area_input_string = area_input.value;
+
                 rectangle_data[area_input_string] = '{}';
-                localStorage.setItem(requirement.textContent, JSON.stringify(rectangle_data));
+                const new_rectangle_data_string = JSON.stringify(rectangle_data)
+
+                localStorage.setItem(requirement_string, new_rectangle_data_string);
             }
         }
 
-        function removeAreaInput(event) {
+        function removeAreaInputUponEnter(event) {
             if (event.key === 'Enter' & area_input.value !== '') {
                 area_input.remove();
             }
         }
-
-        
-        
 
         function appendAreaAndDraftCourseToContainer(event) {
             if (event.key === 'Enter' & area_input.value !== '') {
@@ -207,8 +311,10 @@ function loadWebPage() {
                 const draft_course = document.createElement('p');
                 draft_course.className = 'draft_course_template';
                 area_and_courses_container.append(draft_course);
-                draft_course.addEventListener('mouseover', makeDraftCourseBorderDashedWithMessage);
-                draft_course.addEventListener('mouseleave', removeDraftCourseBorderAndMessage);
+                draft_course.addEventListener('mouseover', makeDraftCourseBorderDashed);
+                draft_course.addEventListener('mouseover', addMessageToDraftCourse);
+                draft_course.addEventListener('mouseleave', removeDraftCourseBorder);
+                draft_course.addEventListener('mouseleave', removeDraftCourseMessage);
             }
         }
 
@@ -219,7 +325,35 @@ function loadWebPage() {
             }
         }
 
+        //the user can move their cursor out of the rectangle to cancel
+        //inputting an area
+
+        rectangle.addEventListener('mouseleave', removeAreaInputUponCursorExit);
+        rectangle.addEventListener('mouseleave', addDraftAreaUponExit);
+
+        function removeAreaInputUponCursorExit() {
+            area_input.remove();
+        }
+
+        function addDraftAreaUponExit() {
+            rectangle.append(draft_area);
+            draft_area.style.borderStyle = '';
+            draft_area.textContent = '';
+        }
+
         document.body.append(rectangle);
     }    
 }
+
+//todo: create course-adding functionality for the draft courses
+//of newly created areas
+
+//todo: add a status-adding functionality for course inputs
+//e.g "Area B --satisfied"
+//e.g "Area B --not satisfied"
+//e.g. "Area B --in progress"
+//e.g. "Area B" -> default is not satisfied
+
+//todo: add the option to delete requirements, areas, and courses 
+//click a div to delete
 
