@@ -1,87 +1,91 @@
+loadWebPageWithNoData();
+loadWebPage();
+
 //when there is no pre-existing course data
 
-if (localStorage.length === 0) {
+function loadWebPageWithNoData() {
 
-    //create beginning draft rectangle
+    if (localStorage.length === 0) {
 
-    const beginning_draft_rectangle = document.createElement('div');
-    beginning_draft_rectangle.id = 'beginning_draft_rectangle';
-    beginning_draft_rectangle.textContent = '+';
+        //create beginning draft rectangle
 
-    document.body.append(beginning_draft_rectangle);
+        const beginning_draft_rectangle = document.createElement('div');
+        beginning_draft_rectangle.id = 'beginning_draft_rectangle';
+        beginning_draft_rectangle.textContent = '+';
 
-    beginning_draft_rectangle.addEventListener('mouseover', makeBorderDashed);
-    beginning_draft_rectangle.addEventListener('mouseleave', makeBorderSolid);
+        document.body.append(beginning_draft_rectangle);
 
-    function makeBorderDashed(event) {
-        event.target.style.borderStyle = 'dashed';
-    }
+        beginning_draft_rectangle.addEventListener('mouseover', makeBorderDashed);
+        beginning_draft_rectangle.addEventListener('mouseleave', makeBorderSolid);
 
-    function makeBorderSolid(event) {
-        event.target.style.borderStyle = 'solid';
-    }
-
-    //prompt user to enter a course requirement for the first rectangle
-    //after clicking on beginning draft rectangle
-
-    beginning_draft_rectangle.addEventListener('click', removeBeginningDraftRectangle);
-
-    function removeBeginningDraftRectangle() {
-        beginning_draft_rectangle.remove();
-    }
-    
-    const message_box = document.createElement('div');
-    message_box.className = 'message_box_template';
-    const message_box_text = document.createElement('p');
-    message_box_text.textContent = 'Enter a course requirement';
-    message_box_text.className = 'message_box_text';
-    message_box.append(message_box_text);
-    const requirement_input = document.createElement('input');
-    requirement_input.id = 'requirement_input';
-    message_box.append(requirement_input);
-
-    beginning_draft_rectangle.addEventListener('click', createMessageBox);
-    beginning_draft_rectangle.addEventListener('click', makeRequirementInputFocus);
-
-    function createMessageBox(){
-        document.body.append(message_box);
-    }
-
-    function makeRequirementInputFocus() {
-        requirement_input.focus();
-    }
-
-    requirement_input.addEventListener('keydown', parseRequirementInputToLocalStorage);
-    requirement_input.addEventListener('keydown', removeMessageBox);
-    requirement_input.addEventListener('keydown', loadFirstRectangleUponEnter);
-
-    //after the user enters text and hits the enter key, the first rectangle with
-    //its course requirement is created
-
-    function parseRequirementInputToLocalStorage(event) {
-        if (event.key === 'Enter' && requirement_input.value !== ''){;
-            localStorage.setItem(requirement_input.value, '{}');
+        function makeBorderDashed(event) {
+            event.target.style.borderStyle = 'dashed';
         }
-    }
 
-    function removeMessageBox(event) {
-        if (event.key === 'Enter' && requirement_input.value !== ''){
-            message_box.remove();
+        function makeBorderSolid(event) {
+            event.target.style.borderStyle = 'solid';
         }
-    }
 
-    function loadFirstRectangleUponEnter(event) {
-        if (event.key === 'Enter' && requirement_input.value !== '') {
-            loadWebPage();
+        //prompt user to enter a course requirement for the first rectangle
+        //after clicking on beginning draft rectangle
+
+        beginning_draft_rectangle.addEventListener('click', removeBeginningDraftRectangle);
+
+        function removeBeginningDraftRectangle() {
+            beginning_draft_rectangle.remove();
+        }
+        
+        const message_box = document.createElement('div');
+        message_box.className = 'message_box_template';
+
+        const message_box_text = document.createElement('p');
+        message_box_text.textContent = 'Enter a course requirement';
+        message_box_text.className = 'message_box_text';
+        message_box.append(message_box_text);
+
+        const requirement_input = document.createElement('input');
+        requirement_input.id = 'requirement_input';
+        message_box.append(requirement_input);
+
+        beginning_draft_rectangle.addEventListener('click', createMessageBox);
+        beginning_draft_rectangle.addEventListener('click', makeRequirementInputFocus);
+
+        function createMessageBox(){
+            document.body.append(message_box);
+        }
+
+        function makeRequirementInputFocus() {
+            requirement_input.focus();
+        }
+
+        requirement_input.addEventListener('keydown', parseRequirementInputToLocalStorage);
+        requirement_input.addEventListener('keydown', removeMessageBox);
+        requirement_input.addEventListener('keydown', loadFirstRectangleUponEnter);
+
+        //after the user enters text and hits the enter key, the first rectangle with
+        //its course requirement is created
+
+        function parseRequirementInputToLocalStorage(event) {
+            if (event.key === 'Enter' && requirement_input.value !== ''){;
+                localStorage.setItem(requirement_input.value, '{}');
+            }
+        }
+
+        function removeMessageBox(event) {
+            if (event.key === 'Enter' && requirement_input.value !== ''){
+                message_box.remove();
+            }
+        }
+
+        function loadFirstRectangleUponEnter(event) {
+            if (event.key === 'Enter' && requirement_input.value !== '') {
+                loadWebPage();
+            }
         }
     }
 }
 
 //when there is pre-existing course data
-
-else {
-    loadWebPage();
-}
 
 function loadWebPage() {
     for (const key_index in Object.keys(localStorage)) {
@@ -98,8 +102,8 @@ function loadWebPage() {
         rectangle.append(requirement);
 
         //parse strings of the rectangle's course areas from local storage,
-        //append individual course area divs to an area and courses container,
-        //and appending the container to the current rectangle
+        //append an individual course area div to its own area and courses container,
+        //and append the container to the current rectangle
 
         const current_key = requirement.textContent;
         const current_rectangle_data = JSON.parse(localStorage.getItem(current_key));
@@ -126,16 +130,6 @@ function loadWebPage() {
             draft_course.addEventListener('mouseover', addMessageToDraftCourse);
             draft_course.addEventListener('mouseleave', removeDraftCourseBorder);
             draft_course.addEventListener('mouseleave', removeDraftCourseMessage);
-            //todo: add course inside course_and_status_container when
-            //user clicks on draft course and enters a course name.
-            //status is not satisfied by default
-            //course and status are side by side in a course_and_status_container
-            //status is a paragraph by default, but becomes a 
-            //dropdown menu upon click (will include deletion feature later)
-
-            // if (current_rectangle_data[area_string] !== '{}') {
-                
-            // }
 
             const course_input = document.createElement('input');
             course_input.className = 'course_input_template';
@@ -315,6 +309,9 @@ function loadWebPage() {
                 draft_course.addEventListener('mouseover', addMessageToDraftCourse);
                 draft_course.addEventListener('mouseleave', removeDraftCourseBorder);
                 draft_course.addEventListener('mouseleave', removeDraftCourseMessage);
+                draft_course.addEventListener('click', removeDraftCourse);
+                draft_course.addEventListener('click', addCourseInput);
+                draft_course.addEventListener('click', focusCourseInput);
             }
         }
 

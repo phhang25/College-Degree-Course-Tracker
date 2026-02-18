@@ -8,14 +8,14 @@ h1 {
     font-weight: lighter;
 }
 
-#beginning_draft_rectangle {
+.draft_rectangle_template {
     border: 5px gray;
     border-style: solid;
     border-radius: 20px;
     background-color: lightgrey;
     color: rgb(100, 100, 100);
     width: 550px;
-    height:300px;
+    height: 300px;
     font-size: 80px;
     display: flex;
     justify-content: center;
@@ -35,7 +35,9 @@ h1 {
     font-size: 50px;
     justify-content: center;
     align-items: center;
-    margin: auto;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
     word-break: break-all;
 }
 
@@ -55,7 +57,7 @@ h1 {
     margin: auto;
 }
 
-#requirement_input {
+.message_box_input {
     width: 470px;
     height: 40px;
     font-size: 30px;
@@ -66,7 +68,13 @@ h1 {
 .requirement_template {
     display: flex;
     justify-content: center;
-    margin: 15px;
+    align-items: center;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    min-height: 40px;
+    font-size: 50px;
     font-weight: lighter;
     word-break: break-all;
 }
@@ -79,12 +87,16 @@ h1 {
 .draft_area_template {
     display: flex;
     justify-content: center;
+    align-items: center;
     font-weight: lighter;
+    font-size: 40px;
     width: 500px;
     height: 50px;
     border-radius: 20px;
     border-width: 0.1px;
-    margin: auto;
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 5px;
     cursor: pointer;
 }
@@ -95,11 +107,13 @@ h1 {
     align-items: center;
     width: 500px;
     height: 50px;
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 5px;
-    margin: auto;
     border-radius: 20px;
     background-color: lightblue;
-    font-size: 30px;
+    font-size: 40px;
 }
 
 .area_template {
