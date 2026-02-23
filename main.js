@@ -18,6 +18,12 @@ function createDraftRectangle() {
 
 function makeBorderDashedUponMouseOver(event) {
     event.target.style.borderStyle = 'dashed';
+    if (event.target.className === 'draft_course_template') {
+        event.target.style.marginBottom = '8.4px';
+    }
+    else if (event.target.className === 'draft_area_template') {
+        event.target.style.marginBottom = '1.8px';
+    }
 }
 
 function makeBorderSolidUponMouseLeave(event) {
@@ -26,6 +32,12 @@ function makeBorderSolidUponMouseLeave(event) {
 
 function makeBorderTransparentUponMouseleave(event) {
     event.target.style.borderStyle = '';
+    if (event.target.className === 'draft_course_template') {
+        event.target.style.marginBottom = '10px';
+    }
+    else if (event.target.className === 'draft_area_template') {
+        event.target.style.marginBottom = '5px';
+    }
 }
 
 function removeElementUponClick(event) {
