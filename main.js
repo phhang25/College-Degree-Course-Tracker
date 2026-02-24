@@ -22,7 +22,7 @@ function makeBorderDashedUponMouseOver(event) {
         event.target.style.marginBottom = '8.4px';
     }
     else if (event.target.className === 'draft_area_template') {
-        event.target.style.marginBottom = '1.8px';
+        event.target.style.marginBottom = '6.8px';
     }
 }
 
@@ -30,14 +30,22 @@ function makeBorderSolidUponMouseLeave(event) {
     event.target.style.borderStyle = 'solid';
 }
 
-function makeBorderTransparentUponMouseleave(event) {
+function makeBorderTransparentUponMouseLeave(event) {
     event.target.style.borderStyle = '';
     if (event.target.className === 'draft_course_template') {
         event.target.style.marginBottom = '10px';
     }
     else if (event.target.className === 'draft_area_template') {
-        event.target.style.marginBottom = '5px';
+        event.target.style.marginBottom = '10px';
     }
+}
+
+function boldTextUponMouseOver(event) {
+    event.target.style.fontWeight = 'bold';
+}
+
+function unboldTextUponMouseLeave(event) {
+    event.target.style.fontWeight = 'lighter';
 }
 
 function removeElementUponClick(event) {
@@ -74,6 +82,7 @@ function createMessageBox() {
 
     const message_box_input = document.createElement('input');
     message_box_input.className = 'message_box_input';
+    message_box_input.placeholder = 'Type a course requirement and hit Enter.';
     message_box_input.addEventListener('keydown', appendRectangleToBodyUponEnter);
     message_box_input.addEventListener('keydown', parseRequirementInputToLocalStorage);
     message_box_input.addEventListener('keydown', appendDraftRectangleToBodyUponEnter);
@@ -147,6 +156,9 @@ function createRectangle() {
 function createRequirement() {
     const requirement = document.createElement('div');
     requirement.className = 'requirement_template';
+    requirement.addEventListener('mouseover', boldTextUponMouseOver);
+    requirement.addEventListener('mouseleave', unboldTextUponMouseLeave);
+
     return requirement;
 }
 
@@ -157,7 +169,7 @@ function createDraftArea() {
 
     draft_area.addEventListener('mouseover', makeBorderDashedUponMouseOver);
     draft_area.addEventListener('mouseover', addMessageUponMouseOver);
-    draft_area.addEventListener('mouseleave', makeBorderTransparentUponMouseleave);
+    draft_area.addEventListener('mouseleave', makeBorderTransparentUponMouseLeave);
     draft_area.addEventListener('mouseleave', removeMessageUponMouseLeave);
     draft_area.addEventListener('click', appendAreaInputUponClickAndFocus);
     draft_area.addEventListener('click', removeElementUponClick);
@@ -167,6 +179,7 @@ function createDraftArea() {
 
 function appendAreaInputUponClickAndFocus(event) {
     const area_input = createAreaInput();
+    area_input.style.marginBottom = '4.8px';
     event.target.parentElement.append(area_input);
     area_input.focus();
 }
@@ -175,6 +188,7 @@ function appendAreaInputUponClickAndFocus(event) {
 function createAreaInput() {
     const area_input = document.createElement('input');
     area_input.className = 'area_input_template';
+    area_input.placeholder = 'Type a course area and hit Enter.';
 
     area_input.addEventListener('mouseleave', appendDraftAreaUponMouseLeave);
     area_input.addEventListener('mouseleave', removeElementUponMouseLeave);
@@ -244,6 +258,9 @@ function createArea() {
     area.className = 'area_template';
     area_container.append(area);
 
+    area.addEventListener('mouseover', boldTextUponMouseOver);
+    area.addEventListener('mouseleave', unboldTextUponMouseLeave);
+
     return area_container;
 }
 
@@ -253,7 +270,7 @@ function createDraftCourse() {
     draft_course.className = 'draft_course_template';
     draft_course.addEventListener('mouseover', makeBorderDashedUponMouseOver);
     draft_course.addEventListener('mouseover', addMessageUponMouseOver);
-    draft_course.addEventListener('mouseleave', makeBorderTransparentUponMouseleave);
+    draft_course.addEventListener('mouseleave', makeBorderTransparentUponMouseLeave);
     draft_course.addEventListener('mouseleave', removeMessageUponMouseLeave);
     draft_course.addEventListener('click', appendCourseInputUponClickAndFocus);
     draft_course.addEventListener('click', removeElementUponClick);
@@ -263,6 +280,8 @@ function createDraftCourse() {
 
 function appendCourseInputUponClickAndFocus(event) {
     const course_input = createCourseInput();
+    course_input.style.marginBottom = '6.4px';
+    course_input.placeholder = 'Course Name > Course Status'
     event.target.after(course_input);
     course_input.focus();
 }
@@ -357,7 +376,49 @@ function createCourse() {
     course_status.className = 'course_status_template';
     course.append(course_status);
 
+    course_name.addEventListener('mouseover', boldTextUponMouseOver);
+    course_name.addEventListener('mouseleave', unboldTextUponMouseLeave);
+
+    course_status.addEventListener('mouseover', boldTextUponMouseOver);
+    course_status.addEventListener('mouseleave', unboldTextUponMouseLeave);
+
     return course;
+}
+
+function createEditBox() {
+    const edit_box = document.createElement('div');
+    edit_box.className = 'edit_box_template';
+
+    const edit_box_text = document.createElement('p');
+    edit_box_text.className = 'edit_box_text_template';
+    edit_box_text.textContent = 'General Education';
+    edit_box.append(edit_box_text);
+
+    const update_option = document.createElement('div');
+    update_option.className = 'edit_box_option_template';
+    update_option.textContent = 'Update';
+    update_option.style.backgroundColor = 'orange';
+    edit_box.append(update_option);
+    update_option.addEventListener('mouseover', boldTextUponMouseOver);
+    update_option.addEventListener('mouseleave', unboldTextUponMouseLeave);
+
+    const delete_option = document.createElement('div');
+    delete_option.className = 'edit_box_option_template';
+    delete_option.textContent = 'Delete'
+    delete_option.style.backgroundColor = 'red';
+    edit_box.append(delete_option);
+    delete_option.addEventListener('mouseover', boldTextUponMouseOver);
+    delete_option.addEventListener('mouseleave', unboldTextUponMouseLeave);
+
+    const cancel_option = document.createElement('div');
+    cancel_option.textContent = 'Cancel';
+    cancel_option.className = 'edit_box_option_template';
+    cancel_option.style.backgroundColor = 'lightgray'
+    edit_box.append(cancel_option);
+    cancel_option.addEventListener('mouseover', boldTextUponMouseOver);
+    cancel_option.addEventListener('mouseleave', unboldTextUponMouseLeave);
+
+    return edit_box;
 }
 
 function getJSONOfWebData() {
@@ -430,3 +491,8 @@ function loadBottomDraftRectangle() {
 }
 
 loadBottomDraftRectangle();
+
+const new_edit_box = createEditBox();
+document.body.append(new_edit_box);
+
+// document.body.style.overflow = 'hidden';
