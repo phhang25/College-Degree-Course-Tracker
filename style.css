@@ -184,7 +184,7 @@ h1 {
     font-weight: lighter;
     font-size: 25px;
     width: 200px;
-    min-height: 50px;
+    min-height: 20px;
     word-break: break-all;
     cursor: pointer;
 }
@@ -196,7 +196,7 @@ h1 {
     font-weight: lighter;
     font-size: 25px;
     width: 200px;
-    min-height: 50px;
+    min-height: 20px;
     word-break: break-all;
     cursor: pointer;
 }

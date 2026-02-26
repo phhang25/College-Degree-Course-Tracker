@@ -62,9 +62,12 @@ function removeElementUponMouseLeave(event) {
     event.target.remove();
 }
 
-function removeParentUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        event.target.parentElement.remove(); 
+function addMessageUponMouseOver(event) {
+    if (event.target.className === 'draft_area_template') {
+        event.target.textContent = 'Add a new course area';
+    }
+    else if (event.target.className === 'draft_course_template') {
+        event.target.textContent = 'Add a new course';
     }
 }
 
@@ -83,58 +86,63 @@ function createMessageBox() {
     const message_box_input = document.createElement('input');
     message_box_input.className = 'message_box_input';
     message_box_input.placeholder = 'Type a course requirement and hit Enter.';
-    message_box_input.addEventListener('keydown', appendRectangleToBodyUponEnter);
-    message_box_input.addEventListener('keydown', parseRequirementInputToLocalStorage);
-    message_box_input.addEventListener('keydown', appendDraftRectangleToBodyUponEnter);
-    message_box_input.addEventListener('keydown', removeParentUponEnter);        
+    message_box_input.addEventListener('keydown', loadRectanglesUponEnter);   
     message_box.append(message_box_input);
     
     return message_box;
 }
 
-function addMessageUponMouseOver(event) {
-    if (event.target.className === 'draft_area_template') {
-        event.target.textContent = 'Add a new course area';
-    }
-    else if (event.target.className === 'draft_course_template') {
-        event.target.textContent = 'Add a new course';
+function loadRectanglesUponEnter(event) {
+    if (event.key === 'Enter' & event.target.value !== '' & !requirementExists(event)) {
+        parseRequirementInputToLocalStorage(event);
+        appendRectangleToBodyUponEnter(event);
+        appendDraftRectangleToBodyUponEnter(event);
+        removeMessageBoxUponEnter(event);
     }
 }
 
-function parseRequirementInputToLocalStorage(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const parsed_requirement_string = event.target.value;
-
-        const JSON_of_web_data = getJSONOfWebData();
-
-        JSON_of_web_data[parsed_requirement_string] = {}; 
-
-        const stringified_JSON_of_web_data = JSON.stringify(JSON_of_web_data);
-
-        localStorage.setItem('', stringified_JSON_of_web_data);
-    }
-}   
+function requirementExists(event) {
+    const web_data_JSON = getJSONOfWebData();
+    const requirement_string = event.target.value;
+    return requirement_string in web_data_JSON;
+}
 
 function appendRectangleToBodyUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const rectangle = createRectangle();
+        
+    const rectangle = createRectangle();
 
-        const requirement = createRequirement();
-        requirement.textContent = event.target.value;
-        rectangle.append(requirement);
+    const requirement = createRequirement();
+    requirement.textContent = event.target.value;
+    rectangle.append(requirement);
 
-        const draft_area = createDraftArea();
-        rectangle.append(draft_area);
+    const draft_area = createDraftArea();
+    rectangle.append(draft_area);
 
-        document.body.append(rectangle);
-    } 
+    document.body.append(rectangle);
+        
 }
 
 function appendDraftRectangleToBodyUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const draft_rectangle = createDraftRectangle();
-        document.body.append(draft_rectangle);
-    }
+    const draft_rectangle = createDraftRectangle();
+    document.body.append(draft_rectangle);
+}
+
+function removeMessageBoxUponEnter(event) {
+    event.target.parentElement.remove();
+}
+
+function parseRequirementInputToLocalStorage(event) {
+    
+    const parsed_requirement_string = event.target.value;
+
+    const JSON_of_web_data = getJSONOfWebData();
+
+    JSON_of_web_data[parsed_requirement_string] = {}; 
+
+    const stringified_JSON_of_web_data = JSON.stringify(JSON_of_web_data);
+
+    localStorage.setItem('', stringified_JSON_of_web_data);
+
 }
 
 function appendDraftRectangleToBodyUponMouseLeave() {
@@ -192,10 +200,7 @@ function createAreaInput() {
 
     area_input.addEventListener('mouseleave', appendDraftAreaUponMouseLeave);
     area_input.addEventListener('mouseleave', removeElementUponMouseLeave);
-    area_input.addEventListener('keydown', parseAreaInputToLocalStorage);
-    area_input.addEventListener('keydown', appendAreaUponEnter);
-    area_input.addEventListener('keydown', appendDraftAreaUponEnter);
-    area_input.addEventListener('keydown', removeAreaInputUponEnter);
+    area_input.addEventListener('keydown', loadAreaUponEnter);
     
     return area_input;
 }
@@ -205,44 +210,53 @@ function appendDraftAreaUponMouseLeave(event) {
     event.target.parentElement.append(draft_area);
 }
 
-function parseAreaInputToLocalStorage(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const area_input_string = event.target.value;
+function areaExists(event) {
+    const web_data_JSON = getJSONOfWebData();
+    const area_string = event.target.value;
+    const requirement_string = event.target.parentElement.firstChild.textContent;
+    
+    return area_string in web_data_JSON[requirement_string];
+}
 
-        const requirement_string = event.target.parentElement.firstChild.textContent;
-
-        const web_data_JSON = getJSONOfWebData();
-
-        web_data_JSON[requirement_string][area_input_string] = {};
-
-        const stringified_JSON_of_web_data = JSON.stringify(web_data_JSON);
-
-        localStorage.setItem('', stringified_JSON_of_web_data);
+function loadAreaUponEnter(event) {
+    if (event.key === 'Enter' & event.target.value !== '' & !areaExists(event)){
+        parseAreaInputToLocalStorage(event);
+        appendAreaUponEnter(event);
+        appendDraftAreaUponEnter(event);
+        removeAreaInputUponEnter(event);
     }
 }
 
 function appendAreaUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const area = createArea();
-        area.firstChild.textContent = event.target.value;
-        event.target.parentElement.append(area);
+    const area = createArea();
+    area.firstChild.textContent = event.target.value;
+    event.target.parentElement.append(area);
 
-        const draft_course = createDraftCourse();
-        area.append(draft_course);
-    }
+    const draft_course = createDraftCourse();
+    area.append(draft_course);
 }
 
 function appendDraftAreaUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const draft_area = createDraftArea();
-        event.target.parentElement.append(draft_area);
-    }
+    const draft_area = createDraftArea();
+    event.target.parentElement.append(draft_area);
 }
 
 function removeAreaInputUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        event.target.remove();
-    }
+    event.target.remove();
+}
+
+function parseAreaInputToLocalStorage(event) {
+    const area_input_string = event.target.value;
+
+    const requirement_string = event.target.parentElement.firstChild.textContent;
+
+    const web_data_JSON = getJSONOfWebData();
+
+    web_data_JSON[requirement_string][area_input_string] = {};
+
+    const stringified_JSON_of_web_data = JSON.stringify(web_data_JSON);
+
+    localStorage.setItem('', stringified_JSON_of_web_data);
 }
 
 function removeMessageUponMouseLeave(event) {
@@ -293,10 +307,55 @@ function createCourseInput() {
 
     course_input.addEventListener('mouseleave', appendDraftCourseUponMouseLeave);
     course_input.addEventListener('mouseleave', removeElementUponMouseLeave);
-    course_input.addEventListener('keydown', parseCourseInputToLocalStorage);
-    course_input.addEventListener('keydown', appendCourseAndDraftCourseUponEnter);
+    course_input.addEventListener('keydown', loadCoursesUponEnter);
 
     return course_input;
+}
+
+function loadCoursesUponEnter(event) {
+    if (event.key === 'Enter' & event.target.value !== '' & !courseExists(event)) {
+        parseCourseInputToLocalStorage(event);
+        appendCourseAndDraftCourseUponEnter(event);
+    }
+}
+
+function courseExists(event) {
+    const web_data_JSON = getJSONOfWebData();
+    const requirement_string = event.target.parentElement.parentElement.firstChild.textContent;
+    const area_string = event.target.parentElement.firstChild.textContent;
+    const user_input = event.target.value;
+    const user_input_split = user_input.split(' > ');
+    let course_string = '';
+
+    if (user_input_split.length === 1 || user_input_split.length === 2) {
+        course_string = user_input_split[0];
+        return course_string in web_data_JSON[requirement_string][area_string];
+    }
+}
+
+function parseCourseInputToLocalStorage(event) {
+    const course_input_string = event.target.value;
+    const input_split_array = course_input_string.split(' > ');
+
+    const JSON_of_web_data = getJSONOfWebData();
+    const requirement_string = event.target.parentElement.parentElement.firstChild.textContent;
+    const area_string = event.target.parentElement.firstChild.textContent;
+    
+    let course_name_string = '';
+    let course_status_string = '';
+
+    if (input_split_array.length === 1) {
+        course_name_string = course_input_string;
+        course_status_string = 'not satisfied';
+    }
+    else if (input_split_array.length === 2) {
+        course_name_string = input_split_array[0];
+        course_status_string = input_split_array[1];
+    }
+
+    JSON_of_web_data[requirement_string][area_string][course_name_string] = course_status_string;
+    const stringified_JSON_of_web_data = JSON.stringify(JSON_of_web_data);
+    localStorage.setItem('', stringified_JSON_of_web_data);
 }
 
 function appendDraftCourseUponMouseLeave(event) {
@@ -304,64 +363,33 @@ function appendDraftCourseUponMouseLeave(event) {
     event.target.after(draft_course);
 }
 
-function parseCourseInputToLocalStorage(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const course_input_string = event.target.value;
-        const input_split_array = course_input_string.split(' > ');
-
-        const JSON_of_web_data = getJSONOfWebData();
-        const requirement_string = event.target.parentElement.parentElement.firstChild.textContent;
-        const area_string = event.target.parentElement.firstChild.textContent;
-        
-        let course_name_string = '';
-        let course_status_string = '';
-
-        if (input_split_array.length === 1) {
-            course_name_string = course_input_string;
-            course_status_string = 'not satisfied';
-        }
-        else if (input_split_array.length === 2) {
-            course_name_string = input_split_array[0];
-            course_status_string = input_split_array[1];
-        }
-
-        console.log(area_string);
-
-        JSON_of_web_data[requirement_string][area_string][course_name_string] = course_status_string;
-        const stringified_JSON_of_web_data = JSON.stringify(JSON_of_web_data);
-        localStorage.setItem('', stringified_JSON_of_web_data);        
-    }
-}
-
 function appendCourseAndDraftCourseUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '') {
-        const course = createCourse();
-        const area = event.target.parentElement;
+    const course = createCourse();
+    const area = event.target.parentElement;
 
-        const course_input_string = event.target.value;
-        const input_split_array = course_input_string.split(' > ');
+    const course_input_string = event.target.value;
+    const input_split_array = course_input_string.split(' > ');
 
-        if (input_split_array.length === 1) {
-            const course_name_string = course_input_string;
-            const course_status_string = 'not satisfied';
-            course.firstChild.textContent = course_name_string;
-            course.firstChild.nextSibling.textContent = course_status_string;   
-        }
-
-        else if (input_split_array.length === 2) {
-            const course_name_string = input_split_array[0];
-            const course_status_string = input_split_array[1];
-            course.firstChild.textContent = course_name_string;
-            course.firstChild.nextSibling.textContent = course_status_string;
-        }
-
-        area.append(course);
-
-        const draft_course = createDraftCourse();
-        area.append(draft_course);
-
-        event.target.remove();
+    if (input_split_array.length === 1) {
+        const course_name_string = course_input_string;
+        const course_status_string = 'not satisfied';
+        course.firstChild.textContent = course_name_string;
+        course.firstChild.nextSibling.textContent = course_status_string;   
     }
+
+    else if (input_split_array.length === 2) {
+        const course_name_string = input_split_array[0];
+        const course_status_string = input_split_array[1];
+        course.firstChild.textContent = course_name_string;
+        course.firstChild.nextSibling.textContent = course_status_string;
+    }
+
+    area.append(course);
+
+    const draft_course = createDraftCourse();
+    area.append(draft_course);
+
+    event.target.remove();
 }
 
 function createCourse() {
@@ -492,7 +520,7 @@ function loadBottomDraftRectangle() {
 
 loadBottomDraftRectangle();
 
-const new_edit_box = createEditBox();
-document.body.append(new_edit_box);
+// const new_edit_box = createEditBox();
+// document.body.append(new_edit_box);
 
 // document.body.style.overflow = 'hidden';
