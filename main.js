@@ -93,7 +93,7 @@ function createMessageBox() {
 }
 
 function loadRectanglesUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '' & !requirementExists(event)) {
+    if (event.key === 'Enter' & event.target.value !== '' & !requirementExistsForRequirementInput(event)) {
         parseRequirementInputToLocalStorage(event);
         appendRectangleToBodyUponEnter(event);
         appendDraftRectangleToBodyUponEnter(event);
@@ -101,7 +101,7 @@ function loadRectanglesUponEnter(event) {
     }
 }
 
-function requirementExists(event) {
+function requirementExistsForRequirementInput(event) {
     const web_data_JSON = getJSONOfWebData();
     const requirement_string = event.target.value;
     return requirement_string in web_data_JSON;
@@ -166,8 +166,25 @@ function createRequirement() {
     requirement.className = 'requirement_template';
     requirement.addEventListener('mouseover', boldTextUponMouseOver);
     requirement.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    requirement.addEventListener('click', loadEditBoxUponClickingRequirement);
 
     return requirement;
+}
+
+function loadEditBoxUponClickingRequirement(event) {
+
+    if (event.target.parentElement.lastChild.className !== 'edit_box_template') {
+        const requirement_string = event.target.textContent;
+
+        const edit_box = createEditBox(); 
+        edit_box.firstChild.textContent = requirement_string;
+        edit_box.id = 'requirement';
+        
+        event.target.parentElement.append(edit_box);
+        event.target.parentElement.style.position = 'relative';
+        edit_box.style.left = '80%';
+        edit_box.style.top = '0%';
+    }
 }
 
 //DRAFT AREA
@@ -210,7 +227,7 @@ function appendDraftAreaUponMouseLeave(event) {
     event.target.parentElement.append(draft_area);
 }
 
-function areaExists(event) {
+function areaExistsForAreaInput(event) {
     const web_data_JSON = getJSONOfWebData();
     const area_string = event.target.value;
     const requirement_string = event.target.parentElement.firstChild.textContent;
@@ -219,7 +236,7 @@ function areaExists(event) {
 }
 
 function loadAreaUponEnter(event) {
-    if (event.key === 'Enter' & event.target.value !== '' & !areaExists(event)){
+    if (event.key === 'Enter' & event.target.value !== '' & !areaExistsForAreaInput(event)){
         parseAreaInputToLocalStorage(event);
         appendAreaUponEnter(event);
         appendDraftAreaUponEnter(event);
@@ -274,8 +291,25 @@ function createArea() {
 
     area.addEventListener('mouseover', boldTextUponMouseOver);
     area.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    area.addEventListener('click', loadEditBoxUponClickingArea);
 
     return area_container;
+}
+
+function loadEditBoxUponClickingArea(event) {
+    if (event.target.parentElement.lastChild.className !== 'edit_box_template') {
+        
+        const area_string = event.target.textContent;
+
+        const edit_box = createEditBox(); 
+        edit_box.firstChild.textContent = area_string;
+        edit_box.id = 'area';
+        
+        event.target.parentElement.append(edit_box);
+        event.target.parentElement.style.position = 'relative';
+        edit_box.style.left = '80%';
+        edit_box.style.top = '0%';
+    }
 }
 
 //DRAFT COURSE
@@ -392,6 +426,7 @@ function appendCourseAndDraftCourseUponEnter(event) {
     event.target.remove();
 }
 
+//COURSE
 function createCourse() {
     const course = document.createElement('div');
     course.className = 'course_status_container_template';
@@ -406,20 +441,39 @@ function createCourse() {
 
     course_name.addEventListener('mouseover', boldTextUponMouseOver);
     course_name.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    course_name.addEventListener('click', loadEditBoxUponClickingCourse);
 
     course_status.addEventListener('mouseover', boldTextUponMouseOver);
     course_status.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    course_status.addEventListener('click', loadEditBoxUponClickingCourse);
 
     return course;
 }
 
+function loadEditBoxUponClickingCourse(event) {
+    if (event.target.parentElement.lastChild.className !== 'edit_box_template') {
+        
+        const course_string = event.target.parentElement.firstChild.textContent;
+        const status_string = event.target.parentElement.firstChild.nextSibling.textContent;
+
+        const edit_box = createEditBox(); 
+        edit_box.firstChild.textContent = course_string + ' > ' + status_string;
+        edit_box.id = 'course';
+        
+        event.target.parentElement.append(edit_box);
+        event.target.parentElement.style.position = 'relative';
+        edit_box.style.left = '80%';
+        edit_box.style.top = '0%';
+    }
+}
+
+//EDIT BOX
 function createEditBox() {
     const edit_box = document.createElement('div');
     edit_box.className = 'edit_box_template';
 
     const edit_box_text = document.createElement('p');
     edit_box_text.className = 'edit_box_text_template';
-    edit_box_text.textContent = 'General Education';
     edit_box.append(edit_box_text);
 
     const update_option = document.createElement('div');
@@ -429,6 +483,8 @@ function createEditBox() {
     edit_box.append(update_option);
     update_option.addEventListener('mouseover', boldTextUponMouseOver);
     update_option.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    update_option.addEventListener('click', appendUpdateInput);
+    update_option.addEventListener('click', removeUpdateOption);
 
     const delete_option = document.createElement('div');
     delete_option.className = 'edit_box_option_template';
@@ -437,6 +493,8 @@ function createEditBox() {
     edit_box.append(delete_option);
     delete_option.addEventListener('mouseover', boldTextUponMouseOver);
     delete_option.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    delete_option.addEventListener('click', removeFieldFromLocalStorage);
+    delete_option.addEventListener('click', removeRectangleUponClickingDeleteRequirement);
 
     const cancel_option = document.createElement('div');
     cancel_option.textContent = 'Cancel';
@@ -445,8 +503,225 @@ function createEditBox() {
     edit_box.append(cancel_option);
     cancel_option.addEventListener('mouseover', boldTextUponMouseOver);
     cancel_option.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    cancel_option.addEventListener('click', cancelEditBoxInteraction);
 
     return edit_box;
+}
+
+function removeUpdateOption(event) {
+    event.target.remove();
+} 
+
+function createUpdateInput() {
+    const update_input = document.createElement('input');
+    update_input.className = 'update_input_template';
+    update_input.placeholder = 'Enter an update.'
+
+    update_input.addEventListener('mouseleave', appendUpdateOption);
+    update_input.addEventListener('mouseleave', removeUpdateInput);
+    update_input.addEventListener('keydown', loadUpdatedInput);
+
+    return update_input;
+}
+
+function appendUpdateInput(event) {
+    const update_input = createUpdateInput();
+    update_input.id = event.target.parentElement.id;
+    event.target.after(update_input);
+    update_input.focus();
+}
+
+function duplicateExistsForField(event) {
+    const field_name_string = event.target.value;
+    const field_type_string = event.target.parentElement.id;
+    
+    if (field_type_string === 'requirement') {
+        const array_of_requirements = getArrayOfRequirements();
+        return array_of_requirements.includes(field_name_string);
+    }
+    else if (field_type_string === 'area') {
+        const requirement_string = event.target.parentElement.parentElement.parentElement.firstChild.textContent;
+        const array_of_areas = getArrayOfAreas(requirement_string);
+        return array_of_areas.includes(field_name_string);
+    }
+    else if (field_type_string === 'course') {
+        const field_name_split_array = field_name_string.split(' > '); 
+        let course_string = '';
+        const requirement_string = event.target.parentElement.parentElement.parentElement.firstChild.textContent;
+        const area_string = event.target.parentElement.parentElement.firstChild.textContent;
+        if (field_name_split_array.length === 1) {
+            course_string = field_name_split_array[0];
+        }
+        else if (field_name_split_array.length === 2) {
+            course_string = field_name_split_array[0];
+        }
+    }
+}
+
+function appendUpdateOption(event) {
+    const update_option = document.createElement('div');
+    update_option.className = 'edit_box_option_template';
+    update_option.textContent = 'Update';
+    update_option.style.backgroundColor = 'orange';
+    event.target.after(update_option);
+    update_option.addEventListener('mouseover', boldTextUponMouseOver);
+    update_option.addEventListener('mouseleave', unboldTextUponMouseLeave);
+    update_option.addEventListener('click', appendUpdateInput);
+    update_option.addEventListener('click', removeUpdateOption);
+}
+
+function removeUpdateInput(event) {
+    event.target.remove();
+}
+
+function loadUpdatedInput(event) {
+    if (event.key === 'Enter' & event.target.value !== '' & !duplicateExistsForField(event)) {
+        if (event.target.parentElement.id === 'requirement') {
+            parseUpdatedRequirementToLocalStorage(event);
+            changeTextContentOfRequirement(event);
+            removeEditBoxUponEnter(event);
+        }
+        else if (event.target.parentElement.id === 'area') {
+            parseUpdatedAreaToLocalStorage(event);
+            changeTextContentOfArea(event);
+            removeEditBoxUponEnter(event);
+        }
+        else if (event.target.parentElement.id === 'course') {
+            parseUpdatedCourseToLocalStorage(event);
+            changeTextContentOfCourse(event);
+            removeEditBoxUponEnter(event);
+        }
+    }
+}
+
+function parseUpdatedRequirementToLocalStorage(event) {
+    const new_requirement_string = event.target.value;
+    const updated_requirement_string = event.target.parentElement.firstChild.textContent;
+    const web_data_JSON = getJSONOfWebData();
+    const updated_web_json = {};
+    for (const [requirement_string, data] of Object.entries(web_data_JSON)) {
+        if (requirement_string !== updated_requirement_string) {
+            updated_web_json[requirement_string] = data;
+        }
+        else if (requirement_string === updated_requirement_string) {
+            updated_web_json[new_requirement_string] = data;
+        }
+    }
+
+    stringified_updated_web_json = JSON.stringify(updated_web_json);
+    localStorage.setItem('', stringified_updated_web_json);
+}
+
+function changeTextContentOfRequirement(event) {
+    event.target.parentElement.parentElement.firstChild.textContent = event.target.value;
+}
+
+function parseUpdatedAreaToLocalStorage(event) {
+    const new_area_string = event.target.value;
+    const updated_area_string = event.target.parentElement.firstChild.textContent;
+    const web_data_JSON = getJSONOfWebData();
+    const requirement_string = event.target.parentElement.parentElement.parentElement.firstChild.textContent;
+    const requirement_json = web_data_JSON[requirement_string];
+    const updated_requirement_json = {};
+    for (const [area_string, data] of Object.entries(requirement_json)) {
+        if (area_string !== updated_area_string) {
+            updated_requirement_json[area_string] = data;
+        }
+        else if (area_string === updated_area_string) {
+            updated_requirement_json[new_area_string] = data;
+        }
+    }
+    web_data_JSON[requirement_string] = updated_requirement_json;
+    const stringified_JSON_of_web_data = JSON.stringify(web_data_JSON);
+    localStorage.setItem('', stringified_JSON_of_web_data);
+}
+
+function changeTextContentOfArea(event) {
+    event.target.parentElement.parentElement.firstChild.textContent = event.target.value;
+}
+
+function parseUpdatedCourseToLocalStorage(event) {
+    const new_course_status_string = event.target.value;
+    const new_course_status_string_split_array = new_course_status_string.split(' > ');
+    let new_course_name = '';
+    let new_course_status = '';
+    if (new_course_status_string_split_array.length === 1) {
+        new_course_name = new_course_status_string_split_array[0];
+        new_course_status = 'not satisfied';
+    }
+    else if (new_course_status_string_split_array.length === 2) {
+        new_course_name = new_course_status_string_split_array[0];
+        new_course_status = new_course_status_string_split_array[1];
+    }
+
+    const updated_course_status_string = event.target.parentElement.firstChild.textContent;
+    const updated_course_status_string_split_array = updated_course_status_string.split(' > ');
+    const updated_name_string = updated_course_status_string_split_array[0];
+    const web_data_JSON = getJSONOfWebData();
+    const requirement_string = event.target.parentElement.parentElement.parentElement.parentElement.firstChild.textContent;
+    const area_string = event.target.parentElement.parentElement.parentElement.firstChild.textContent;
+    const area_json = web_data_JSON[requirement_string][area_string];
+    const updated_area_json = {};
+
+    for (const [course_string, data] of Object.entries(area_json)) {
+        if (course_string !== updated_name_string) {
+            updated_area_json[course_string] = data;
+        }
+        else if (course_string === updated_name_string) {
+            updated_area_json[new_course_name] = new_course_status;
+        }
+    }
+
+    web_data_JSON[requirement_string][area_string] = updated_area_json;
+    const stringified_JSON_of_web_data = JSON.stringify(web_data_JSON);
+    localStorage.setItem('', stringified_JSON_of_web_data);
+}
+
+function changeTextContentOfCourse(event) {
+    const course_status_string = event.target.value;
+    const course_status_string_split_array = course_status_string.split(' > ');
+    if (course_status_string_split_array.length === 1) {
+        event.target.parentElement.parentElement.firstChild.textContent = course_status_string_split_array[0];
+    }
+    else if (course_status_string_split_array.length === 2) {
+        event.target.parentElement.parentElement.firstChild.textContent = course_status_string_split_array[0];
+        event.target.parentElement.parentElement.firstChild.nextSibling.textContent = course_status_string_split_array[1];
+    }
+}
+
+function removeEditBoxUponEnter(event) {
+    event.target.parentElement.remove();
+}
+
+function removeRectangleUponClickingDeleteRequirement(event) {
+    event.target.parentElement.parentElement.remove();
+}
+
+function removeFieldFromLocalStorage(event) {
+    const web_data_JSON = getJSONOfWebData();
+    const field_type_string = event.target.parentElement.id;
+    if (field_type_string === 'requirement') {
+        delete web_data_JSON[event.target.parentElement.firstChild.textContent];
+    }
+    else if (field_type_string === 'area') {
+        const requirement_string = event.target.parentElement.parentElement.parentElement.firstChild.textContent;
+        const area_string = event.target.parentElement.parentElement.firstChild.textContent
+        delete web_data_JSON[requirement_string][area_string];
+        console.log(web_data_JSON);
+    }
+    else if (field_type_string === 'course') {
+        const requirement_string = event.target.parentElement.parentElement.parentElement.parentElement.firstChild.textContent;
+        const area_string = event.target.parentElement.parentElement.parentElement.firstChild.textContent;
+        const course_name = event.target.parentElement.parentElement.firstChild.textContent;
+
+        delete web_data_JSON[requirement_string][area_string][course_name]
+    }
+    const stringified_JSON_of_web_data = JSON.stringify(web_data_JSON);
+    localStorage.setItem('', stringified_JSON_of_web_data);
+}
+
+function cancelEditBoxInteraction(event) {
+    event.target.parentElement.remove();
 }
 
 function getJSONOfWebData() {
@@ -519,8 +794,3 @@ function loadBottomDraftRectangle() {
 }
 
 loadBottomDraftRectangle();
-
-// const new_edit_box = createEditBox();
-// document.body.append(new_edit_box);
-
-// document.body.style.overflow = 'hidden';

@@ -205,13 +205,14 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 700px;
+    width: 450px;
     min-height: 400px;
     word-break: break-all;
     font-weight: lighter;
     background-color: lightgreen;
     border-radius: 20px;
     border: black 5px solid;
+    position: absolute;
 }
 
 .edit_box_text_template {
@@ -220,7 +221,7 @@ h1 {
     justify-content: center;
     align-items: center;
     min-height: 100px;
-    width: 500px;
+    width: 400px;
     font-size: 40px;
     word-break: break-all;
     margin-top: 10px;
@@ -244,11 +245,14 @@ h1 {
 }
 
 
-.edit_box_input_template {
+.update_input_template {
     display: flex;
-    font-size: 40px;
+    font-size: 30px;
     height: 50px;
-    width: 485px;
+    width: 385px;
+    border-radius: 20px;
     padding-left: 15px;
+    margin: 10px;
+    margin-bottom: 9.6px;
     word-break: break-all;
 }
