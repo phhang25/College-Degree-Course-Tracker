@@ -4,6 +4,7 @@
 ### Add course requirements, course areas, and courses with statuses.
 ### Move cursor away from rectangles to cancel an action.
 ### Enter a course with a status. For example: "CSC 248 > in progress"
+### Update or delete requirements, course areas, and courses with statuses by clicking on them.
 ## What I learned
 ### I realized that I overestimated how much time it would take to design and implement new features. 
 ### However, the project helped me look at big daunting problems and break them down into smaller and more manageable parts.
